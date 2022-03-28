@@ -9,6 +9,22 @@ import UIKit
 
 class ViewController: UIViewController, UITextFieldDelegate {
 
+    enum UIConstant {
+        static let screenHeight: CGFloat = UIScreen.main.bounds.height
+        static let screenWidth: CGFloat = UIScreen.main.bounds.width
+        static let sectionSpacing: CGFloat = 25
+        static let spacing: CGFloat = sectionSpacing * 3
+        static let cellWidth: CGFloat = (screenWidth - spacing) / 2
+        
+        static var cell_X1: CGFloat = sectionSpacing
+        static var cell_X2: CGFloat = sectionSpacing + cellWidth + sectionSpacing
+        static var cell_Y: CGFloat = screenHeight / 10 + sectionSpacing
+        
+        static var appWidth: CGFloat = screenWidth / 3
+        static let iconSectionSpacing: CGFloat = sectionSpacing / 2
+        static let iconWidth : CGFloat = UIConstant.cellWidth / 2.5
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,12 +51,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }()
     
     func setupScrollView() {
-        scrollView.contentSize = CGSize(width: view.bounds.width, height: bgImageView.bounds.size.height)
+        scrollView.contentSize = CGSize(width: view.bounds.width, height: UIConstant.cell_Y + UIConstant.cellWidth )
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            //FIXME:
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -91,25 +106,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             textField.heightAnchor.constraint(equalToConstant: textField.frame.height)
         ])
     }
-    
-    enum UIConstant {
-        static let screenHeight: CGFloat = UIScreen.main.bounds.height
-        static let screenWidth: CGFloat = UIScreen.main.bounds.width
-        static let sectionSpacing: CGFloat = 25
-        static let spacing: CGFloat = sectionSpacing * 3
-        static let cellWidth: CGFloat = (screenWidth - spacing) / 2
         
-        static var cell_X1: CGFloat = sectionSpacing
-        static var cell_X2: CGFloat = sectionSpacing + cellWidth + sectionSpacing
-        static var cell_Y: CGFloat = screenHeight / 10 + sectionSpacing
-        
-        static var appWidth: CGFloat = screenWidth / 3
-        static let iconSectionSpacing: CGFloat = sectionSpacing / 2
-        static let iconWidth : CGFloat = UIConstant.cellWidth / 2.5
-        static let iconXY : CGFloat = UIConstant.cellWidth - iconWidth - UIConstant.iconSectionSpacing * 2
-    }
-    
-    
     func setCellLayout() {
         for i in 1...10 {
             let bigCell = UIView()
@@ -137,9 +134,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
             fourAppItem.isHidden = true
             
             firstAppItem.frame = CGRect(x: 0, y: 0, width: UIConstant.iconWidth , height:  UIConstant.iconWidth)
-            secondAppItem.frame = CGRect(x: UIConstant.iconXY, y: 0, width: UIConstant.iconWidth , height:  UIConstant.iconWidth)
-            thirdAppItem.frame = CGRect(x: 0, y: UIConstant.iconXY, width: UIConstant.iconWidth , height:  UIConstant.iconWidth)
-            fourAppItem.frame = CGRect(x: UIConstant.iconXY , y: UIConstant.iconXY , width: UIConstant.iconWidth , height:  UIConstant.iconWidth)
+            secondAppItem.frame = CGRect(x: 0, y: 0, width: UIConstant.iconWidth , height:  UIConstant.iconWidth)
+            thirdAppItem.frame = CGRect(x: 0, y: 0, width: UIConstant.iconWidth , height:  UIConstant.iconWidth)
+            fourAppItem.frame = CGRect(x: 0 , y: 0 , width: UIConstant.iconWidth , height:  UIConstant.iconWidth)
             
             switch appCount {
             case 1:
@@ -147,34 +144,33 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 secondAppItem.isHidden = false
                 thirdAppItem.isHidden = false
                 fourAppItem.isHidden = false
-                iconsView.addSubview(firstAppItem)
-                iconsView.addSubview(secondAppItem)
-                iconsView.addSubview(thirdAppItem)
-                iconsView.addSubview(fourAppItem)
-                
             case 2:
                 firstAppItem.isHidden = false
                 secondAppItem.isHidden = false
                 thirdAppItem.isHidden = false
-                iconsView.addSubview(firstAppItem)
-                iconsView.addSubview(secondAppItem)
-                iconsView.addSubview(thirdAppItem)
             case 3:
                 firstAppItem.isHidden = false
                 secondAppItem.isHidden = false
-                iconsView.addSubview(firstAppItem)
-                iconsView.addSubview(secondAppItem)
 
             case 4:
                 firstAppItem.isHidden = false
-                iconsView.addSubview(firstAppItem)
 
             default:
                 print("noooo way")
             }
+            iconsView.addSubview(firstAppItem)
+            iconsView.addSubview(secondAppItem)
+            iconsView.addSubview(thirdAppItem)
+            iconsView.addSubview(fourAppItem)
             
             scrollView.addSubview(bigCell)
             bigCell.addSubview(iconsView)
+            iconsView.center = bigCell.center
+            iconsView.translatesAutoresizingMaskIntoConstraints = false
+            firstAppItem.translatesAutoresizingMaskIntoConstraints = false
+            secondAppItem.translatesAutoresizingMaskIntoConstraints = false
+            thirdAppItem.translatesAutoresizingMaskIntoConstraints = false
+            fourAppItem.translatesAutoresizingMaskIntoConstraints = false
             
             if (i % 2 != 0){
                 bigCell.frame = CGRect(x: UIConstant.cell_X1, y: UIConstant.cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
@@ -187,6 +183,37 @@ class ViewController: UIViewController, UITextFieldDelegate {
                 
                 UIConstant.cell_Y = UIConstant.cell_Y + UIConstant.cellWidth + UIConstant.sectionSpacing
             }
+            
+            NSLayoutConstraint.activate([
+                iconsView.topAnchor.constraint(equalTo: bigCell.topAnchor, constant: 15),
+                iconsView.leadingAnchor.constraint(equalTo: bigCell.leadingAnchor, constant: 15),
+                iconsView.trailingAnchor.constraint(equalTo: bigCell.trailingAnchor, constant: -15),
+                iconsView.bottomAnchor.constraint(equalTo: bigCell.bottomAnchor, constant: -15),
+                
+                firstAppItem.topAnchor.constraint(equalTo: iconsView.topAnchor),
+                firstAppItem.leadingAnchor.constraint(equalTo: iconsView.leadingAnchor),
+                firstAppItem.trailingAnchor.constraint(equalTo: secondAppItem.leadingAnchor, constant: -10),
+                firstAppItem.bottomAnchor.constraint(equalTo: thirdAppItem.topAnchor, constant: -10),
+                
+                secondAppItem.topAnchor.constraint(equalTo: iconsView.topAnchor),
+                secondAppItem.trailingAnchor.constraint(equalTo: iconsView.trailingAnchor),
+                secondAppItem.bottomAnchor.constraint(equalTo: fourAppItem.topAnchor, constant: -10),
+                
+                thirdAppItem.leadingAnchor.constraint(equalTo: iconsView.leadingAnchor),
+                thirdAppItem.trailingAnchor.constraint(equalTo: fourAppItem.leadingAnchor, constant: -10),
+                thirdAppItem.bottomAnchor.constraint(equalTo: iconsView.bottomAnchor),
+                
+                fourAppItem.trailingAnchor.constraint(equalTo: iconsView.trailingAnchor),
+                fourAppItem.bottomAnchor.constraint(equalTo: iconsView.bottomAnchor),
+                
+                firstAppItem.heightAnchor.constraint(equalTo: secondAppItem.heightAnchor),
+                secondAppItem.heightAnchor.constraint(equalTo: thirdAppItem.heightAnchor),
+                thirdAppItem.heightAnchor.constraint(equalTo: fourAppItem.heightAnchor),
+                firstAppItem.widthAnchor.constraint(equalTo: secondAppItem.widthAnchor),
+                secondAppItem.widthAnchor.constraint(equalTo: thirdAppItem.widthAnchor),
+                thirdAppItem.widthAnchor.constraint(equalTo: fourAppItem.widthAnchor),
+                
+            ])
         }
     }
 
