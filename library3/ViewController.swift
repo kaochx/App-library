@@ -16,14 +16,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         static let spacing: CGFloat = sectionSpacing * 3
         static let cellWidth: CGFloat = (screenWidth - spacing) / 2
         
-        static var cell_X1: CGFloat = sectionSpacing
-        static var cell_X2: CGFloat = sectionSpacing + cellWidth + sectionSpacing
-        static var cell_Y: CGFloat = screenHeight / 10 + sectionSpacing
-        
-        static var appWidth: CGFloat = screenWidth / 3
         static let iconSectionSpacing: CGFloat = sectionSpacing / 2
         static let iconWidth : CGFloat = UIConstant.cellWidth / 2.5
     }
+    
+    var cell_Y: CGFloat = UIConstant.screenHeight / 10 + UIConstant.sectionSpacing
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +48,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }()
     
     func setupScrollView() {
-        scrollView.contentSize = CGSize(width: view.bounds.width, height: UIConstant.cell_Y + UIConstant.cellWidth )
+        scrollView.contentSize = CGSize(width: view.bounds.width, height: cell_Y + UIConstant.cellWidth )
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -108,6 +105,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
         
     func setCellLayout() {
+        
+        let cell_X1: CGFloat = UIConstant.sectionSpacing
+        let cell_X2: CGFloat = UIConstant.sectionSpacing + UIConstant.cellWidth + UIConstant.sectionSpacing
+        
+        
+        let appWidth: CGFloat = UIConstant.screenWidth / 3
+        
         for i in 1...10 {
             let bigCell = UIView()
             bigCell.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
@@ -173,15 +177,15 @@ class ViewController: UIViewController, UITextFieldDelegate {
             fourAppItem.translatesAutoresizingMaskIntoConstraints = false
             
             if (i % 2 != 0){
-                bigCell.frame = CGRect(x: UIConstant.cell_X1, y: UIConstant.cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
-                iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing , y: UIConstant.iconSectionSpacing, width: UIConstant.appWidth , height: UIConstant.appWidth)
+                bigCell.frame = CGRect(x: cell_X1, y: cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
+                iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing , y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
                 bigCell.layer.cornerRadius = bigCell.frame.height / 5
             } else {
-                bigCell.frame = CGRect(x: UIConstant.cell_X2, y: UIConstant.cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
-                iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing, y: UIConstant.iconSectionSpacing, width: UIConstant.appWidth, height: UIConstant.appWidth)
+                bigCell.frame = CGRect(x: cell_X2, y: cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
+                iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing, y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
                 bigCell.layer.cornerRadius = bigCell.frame.height / 5
                 
-                UIConstant.cell_Y = UIConstant.cell_Y + UIConstant.cellWidth + UIConstant.sectionSpacing
+                cell_Y = cell_Y + UIConstant.cellWidth + UIConstant.sectionSpacing
             }
             
             NSLayoutConstraint.activate([
@@ -216,69 +220,6 @@ class ViewController: UIViewController, UITextFieldDelegate {
             ])
         }
     }
-
-//    let randonApp: UIView = {
-//        let imagesName = ["1","2","3","4","5","6","7"]
-//        let iconsView = UIView()
-//        let appCount = Int.random(in: 1...4)
-//
-//        iconsView.backgroundColor = .clear
-//       // bgView.frame = CGRect(x: UIConstant.cell_X1 * 1.5 , y: UIConstant.cell_Y * 1.5, width: 50, height: 50)
-//
-//        let firstAppItem = UIImageView()
-//        firstAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
-//        let secondAppItem = UIImageView()
-//        secondAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
-//        let thirdAppItem = UIImageView()
-//        thirdAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
-//        let fourAppItem = UIImageView()
-//        fourAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
-//
-//        firstAppItem.isHidden = true
-//        secondAppItem.isHidden = true
-//        thirdAppItem.isHidden = true
-//        fourAppItem.isHidden = true
-//
-//        var iconWidth : CGFloat = UIConstant.cellWidth / 2.5
-//
-//        firstAppItem.frame = CGRect(x: 0, y: 0, width: iconWidth , height:  iconWidth)
-//        secondAppItem.frame = CGRect(x: UIConstant.cellWidth / 2.2, y: 0, width: iconWidth , height:  iconWidth)
-//        thirdAppItem.frame = CGRect(x: 0, y: UIConstant.cellWidth / 2.2, width: iconWidth , height:  iconWidth)
-//        fourAppItem.frame = CGRect(x: UIConstant.cellWidth/2.2 , y: UIConstant.cellWidth/2.2 , width: iconWidth , height:  iconWidth)
-//
-//        switch appCount {
-//        case 1:
-//            firstAppItem.isHidden = false
-//            secondAppItem.isHidden = false
-//            thirdAppItem.isHidden = false
-//            fourAppItem.isHidden = false
-//            iconsView.addSubview(firstAppItem)
-//            iconsView.addSubview(secondAppItem)
-//            iconsView.addSubview(thirdAppItem)
-//            iconsView.addSubview(fourAppItem)
-//
-//        case 2:
-//            firstAppItem.isHidden = false
-//            secondAppItem.isHidden = false
-//            thirdAppItem.isHidden = false
-//            iconsView.addSubview(firstAppItem)
-//            iconsView.addSubview(secondAppItem)
-//            iconsView.addSubview(thirdAppItem)
-//        case 3:
-//            firstAppItem.isHidden = false
-//            secondAppItem.isHidden = false
-//            iconsView.addSubview(firstAppItem)
-//            iconsView.addSubview(secondAppItem)
-//
-//        case 4:
-//            firstAppItem.isHidden = false
-//            iconsView.addSubview(firstAppItem)
-//
-//        default:
-//            print("noooo way")
-//        }
-//        return iconsView
-//    }()
     
 }
 
