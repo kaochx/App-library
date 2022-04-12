@@ -14,7 +14,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         static let screenWidth: CGFloat = UIScreen.main.bounds.width
         static let sectionSpacing: CGFloat = 25
         static let spacing: CGFloat = sectionSpacing * 3
+        static let spacingPad: CGFloat = sectionSpacing * 5
         static let cellWidth: CGFloat = (screenWidth - spacing) / 2
+        static let cellWidthPad: CGFloat = (screenWidth - spacingPad) / 4
         
         static let iconSectionSpacing: CGFloat = sectionSpacing / 2
         static let iconWidth : CGFloat = UIConstant.cellWidth / 2.5
@@ -22,32 +24,43 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     var cell_Y: CGFloat = UIConstant.screenHeight / 10 + UIConstant.sectionSpacing
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(bgImageView)
-        scrollView.addSubview(textField)
+        scrollView.addSubview(searchBarLabelUI)
         view.addSubview(scrollView)
         
+        setupBGView()
         setCellLayout()
         setupScrollView()
         setupSearchBarTextField()
     }
     
-    let bgImageView: UIImageView = {
+    private let bgImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "bgblur"))
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    let scrollView: UIScrollView = {
+    private func setupBGView(){
+        NSLayoutConstraint.activate([
+            bgImageView.topAnchor.constraint(equalTo: view.topAnchor),
+            bgImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bgImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bgImageView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         return scrollView
     }()
     
-    func setupScrollView() {
+    private func setupScrollView() {
         scrollView.contentSize = CGSize(width: view.bounds.width, height: cell_Y + UIConstant.cellWidth )
         NSLayoutConstraint.activate([
             scrollView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -57,80 +70,75 @@ class ViewController: UIViewController, UITextFieldDelegate {
         ])
     }
     
-    let textField: UITextField = {
-        let searchBarTextField = UITextField(frame: CGRect(x: 0, y: 0, width: 250, height: 50))
-        searchBarTextField.placeholder = "App Library"
-        searchBarTextField.layer.cornerRadius = searchBarTextField.frame.height * 0.25
-        searchBarTextField.layer.masksToBounds = true
-        searchBarTextField.clearButtonMode = .whileEditing
-        searchBarTextField.returnKeyType = .done
-        searchBarTextField.textColor = UIColor.black
-        searchBarTextField.textAlignment = .left
-        searchBarTextField.leftViewMode = UITextField.ViewMode.always
-
-        let imageView = UIImageView(image: UIImage(named: "magnifyingglass"))
-        let padding = CGFloat(70)
-        let imageWidth = CGFloat(12)
-        imageView.frame = CGRect(x: padding, y: imageWidth, width: 30, height: 30)
-        imageView.contentMode = .center
-
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: imageWidth + 2 * padding, height: searchBarTextField.frame.height))
-        containerView.addSubview(imageView)
-        searchBarTextField.leftView = containerView
-        searchBarTextField.leftViewMode = .always
+    private let searchBarLabelUI: UILabel = {
+        let barUILabel = UILabel(frame: CGRect(x: 0, y: 0, width: 250, height: 50))
+        barUILabel.layer.cornerRadius = barUILabel.frame.height * 0.3
+        barUILabel.layer.masksToBounds = true
+        barUILabel.textAlignment = .center
+        barUILabel.textColor = .darkGray
+        barUILabel.font = UIFont.systemFont(ofSize: 20)
         
-        searchBarTextField.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
-        searchBarTextField.translatesAutoresizingMaskIntoConstraints = false
-        return searchBarTextField
+        let imageAttachment = NSTextAttachment()
+        imageAttachment.image = UIImage(systemName: "magnifyingglass")?.withTintColor(.darkGray)
+
+        let fullString = NSMutableAttributedString(attachment: imageAttachment)
+        fullString.append(NSAttributedString(string: " App Library"))
+        barUILabel.attributedText = fullString
+        
+        
+        barUILabel.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+        barUILabel.translatesAutoresizingMaskIntoConstraints = false
+        return barUILabel
     }()
-    
-    func leftImage(_ image: UIImage?, imageWidth: CGFloat, padding: CGFloat) {
-        let imageView = UIImageView(image: UIImage(named: "magnifyingglass"))
-        imageView.frame = CGRect(x: padding, y: 0, width: imageWidth, height: textField.frame.height)
-        imageView.contentMode = .center
         
-        let containerView = UIView(frame: CGRect(x: 0, y: 0, width: imageWidth + 2 * padding, height: textField.frame.height))
-        containerView.addSubview(imageView)
-        textField.leftView = containerView
-        textField.leftViewMode = .always
-    }
-    
-    func setupSearchBarTextField() {
+    private func setupSearchBarTextField() {
         NSLayoutConstraint.activate([
-            textField.topAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.topAnchor, constant: 20),
-            textField.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            textField.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            textField.heightAnchor.constraint(equalToConstant: textField.frame.height)
+            searchBarLabelUI.topAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.topAnchor, constant: 20),
+            searchBarLabelUI.leadingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.leadingAnchor, constant: 20),
+            searchBarLabelUI.trailingAnchor.constraint(equalTo: scrollView.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            searchBarLabelUI.heightAnchor.constraint(equalToConstant: searchBarLabelUI.frame.height)
         ])
     }
-        
-    func setCellLayout() {
+    
+    private func setCellLayout() {
         
         let cell_X1: CGFloat = UIConstant.sectionSpacing
         let cell_X2: CGFloat = UIConstant.sectionSpacing + UIConstant.cellWidth + UIConstant.sectionSpacing
         
-        
+        let cell_PadX1: CGFloat = UIConstant.sectionSpacing
+        let cell_PadX2: CGFloat = UIConstant.sectionSpacing * 2 + UIConstant.cellWidthPad
+        let cell_PadX3: CGFloat = UIConstant.sectionSpacing * 3 + UIConstant.cellWidthPad * 2
+        let cell_PadX4: CGFloat = UIConstant.sectionSpacing * 4 + UIConstant.cellWidthPad * 3
+    
         let appWidth: CGFloat = UIConstant.screenWidth / 3
-        
-        for i in 1...10 {
+        print (UIConstant.screenWidth)
+        for i in 1...24 {
             let bigCell = UIView()
             bigCell.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
             bigCell.clipsToBounds = true
          
+            let label = UILabel(frame: CGRect(x: 0, y: 0, width: 100, height: 50))
+            label.text = "Other"
+            label.textColor = UIColor.white
+            //label.font = UIFont.boldSystemFont(ofSize: CGFloat(17))
+            label.font = UIFont(name:"Helvetica Neue", size: 18)
+            
             //icons random
             let imagesName = ["1","2","3","4","5","6","7"]
             let iconsView = UIView()
             let appCount = Int.random(in: 1...4)
             iconsView.backgroundColor = .clear
             
+            let getRandom = randomSequenceGenerator(min: 0, max: 6)
+            
             let firstAppItem = UIImageView()
-            firstAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
+            firstAppItem.image = UIImage(named: imagesName[getRandom()])
             let secondAppItem = UIImageView()
-            secondAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
+            secondAppItem.image = UIImage(named: imagesName[getRandom()])
             let thirdAppItem = UIImageView()
-            thirdAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
+            thirdAppItem.image = UIImage(named: imagesName[getRandom()])
             let fourAppItem = UIImageView()
-            fourAppItem.image = UIImage(named: imagesName[Int.random(in: 0...6)])
+            fourAppItem.image = UIImage(named: imagesName[getRandom()])
             
             firstAppItem.isHidden = true
             secondAppItem.isHidden = true
@@ -155,13 +163,12 @@ class ViewController: UIViewController, UITextFieldDelegate {
             case 3:
                 firstAppItem.isHidden = false
                 secondAppItem.isHidden = false
-
             case 4:
                 firstAppItem.isHidden = false
-
             default:
                 print("noooo way")
             }
+            
             iconsView.addSubview(firstAppItem)
             iconsView.addSubview(secondAppItem)
             iconsView.addSubview(thirdAppItem)
@@ -169,26 +176,54 @@ class ViewController: UIViewController, UITextFieldDelegate {
             
             scrollView.addSubview(bigCell)
             bigCell.addSubview(iconsView)
+            scrollView.addSubview(label)
             iconsView.center = bigCell.center
             iconsView.translatesAutoresizingMaskIntoConstraints = false
             firstAppItem.translatesAutoresizingMaskIntoConstraints = false
             secondAppItem.translatesAutoresizingMaskIntoConstraints = false
             thirdAppItem.translatesAutoresizingMaskIntoConstraints = false
             fourAppItem.translatesAutoresizingMaskIntoConstraints = false
+            label.translatesAutoresizingMaskIntoConstraints = false
             
-            if (i % 2 != 0){
-                bigCell.frame = CGRect(x: cell_X1, y: cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
-                iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing , y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
-                bigCell.layer.cornerRadius = bigCell.frame.height / 5
-            } else {
-                bigCell.frame = CGRect(x: cell_X2, y: cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
-                iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing, y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
-                bigCell.layer.cornerRadius = bigCell.frame.height / 5
-                
-                cell_Y = cell_Y + UIConstant.cellWidth + UIConstant.sectionSpacing
+            switch UIConstant.screenWidth {
+            case  0...600:
+                if (i % 2 != 0){
+                    bigCell.frame = CGRect(x: cell_X1, y: cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
+                    iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing , y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
+                    bigCell.layer.cornerRadius = bigCell.frame.height / 5
+                } else {
+                    bigCell.frame = CGRect(x: cell_X2, y: cell_Y, width: UIConstant.cellWidth, height: UIConstant.cellWidth)
+                    iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing, y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
+                    bigCell.layer.cornerRadius = bigCell.frame.height / 5
+                    
+                    cell_Y = cell_Y + UIConstant.cellWidth + UIConstant.sectionSpacing * 1.5
+                }
+            default:
+                if (i % 4 == 1){
+                    bigCell.frame = CGRect(x: cell_PadX1, y: cell_Y, width: UIConstant.cellWidthPad, height: UIConstant.cellWidthPad)
+                    iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing , y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
+                    bigCell.layer.cornerRadius = bigCell.frame.height / 5
+                } else if (i % 4 == 2){
+                    bigCell.frame = CGRect(x: cell_PadX2, y: cell_Y, width: UIConstant.cellWidthPad, height: UIConstant.cellWidthPad)
+                    iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing , y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
+                    bigCell.layer.cornerRadius = bigCell.frame.height / 5
+                } else if (i % 4 == 3){
+                    bigCell.frame = CGRect(x: cell_PadX3, y: cell_Y, width: UIConstant.cellWidthPad, height: UIConstant.cellWidthPad)
+                    iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing , y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
+                    bigCell.layer.cornerRadius = bigCell.frame.height / 5
+                } else {
+                    bigCell.frame = CGRect(x: cell_PadX4, y: cell_Y, width: UIConstant.cellWidthPad, height: UIConstant.cellWidthPad)
+                    iconsView.frame = CGRect(x: UIConstant.iconSectionSpacing, y: UIConstant.iconSectionSpacing, width: appWidth, height: appWidth)
+                    bigCell.layer.cornerRadius = bigCell.frame.height / 5
+                    
+                    cell_Y = cell_Y + UIConstant.cellWidthPad + UIConstant.sectionSpacing * 2
+                }
             }
-            
+                        
             NSLayoutConstraint.activate([
+                label.topAnchor.constraint(equalTo: bigCell.bottomAnchor),
+                label.centerXAnchor.constraint(equalTo: bigCell.centerXAnchor),
+                
                 iconsView.topAnchor.constraint(equalTo: bigCell.topAnchor, constant: 15),
                 iconsView.leadingAnchor.constraint(equalTo: bigCell.leadingAnchor, constant: 15),
                 iconsView.trailingAnchor.constraint(equalTo: bigCell.trailingAnchor, constant: -15),
@@ -221,5 +256,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
+    private func randomSequenceGenerator(min: Int, max: Int) -> () -> Int {
+        var numbers: [Int] = []
+        return {
+            if numbers.isEmpty {
+                numbers = Array(min ... max)
+            }
+
+            let index = Int(arc4random_uniform(UInt32(numbers.count)))
+            return numbers.remove(at: index)
+        }
+    }
 }
 
